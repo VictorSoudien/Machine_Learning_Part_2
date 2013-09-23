@@ -1,1 +1,0 @@
-Minesweeper mine collection and super mine avoidance using EA and ANN.
