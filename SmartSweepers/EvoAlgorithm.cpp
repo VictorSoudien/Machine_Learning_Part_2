@@ -1,6 +1,7 @@
 #include "EvoAlgorithm.h"
 #include "utils.h"
 #include <algorithm>
+#include <Windows.h>
 
 EvoAlgorithm::EvoAlgorithm(void)
 {
@@ -45,11 +46,11 @@ void EvoAlgorithm::selectBest()
 // Create offspring from current parents to fill the population
 void EvoAlgorithm::performCrossover()
 {
-	while (population.size() != populationSize)
+	while (population.size() < populationSize)
 	{
 		// Cross random parents
-		Genotype parent1 = population.at(RandInt(0, population.size() - 1));
-		Genotype parent2 = population.at(RandInt(0, population.size() - 1));
+		Genotype parent1 = population[RandInt(0, population.size() - 1)];
+		Genotype parent2 = population[RandInt(0, population.size() - 1)];
 
 		std::vector<float> child1Weights;
 		std::vector<float> child2Weights;
@@ -70,6 +71,9 @@ void EvoAlgorithm::performCrossover()
 
 		Genotype child1 = *(new Genotype(child1Weights));
 		Genotype child2 = *(new Genotype(child2Weights));
+
+		population.push_back(child1);
+		population.push_back(child2);
 	}
 }
 
@@ -112,11 +116,15 @@ void EvoAlgorithm::resetFitness()
 void EvoAlgorithm::doOneIteration()
 {
 	//std::vector<Genotype> peviousGeneration = population;
-
+	OutputDebugString("Starting");
 	std::sort(population.begin(), population.end());
+	OutputDebugString("Sorted");
 	selectBest();
+	OutputDebugString("Best");
 	performCrossover();
+	OutputDebugString("Cross");
 	performMutation();
+	OutputDebugString("Mutation");
 
 	resetFitness();
 }
