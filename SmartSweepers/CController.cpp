@@ -1,7 +1,5 @@
 #include "CController.h"
-#include "perceptron.h";
-#include "Evo.h"
-
+#include "EvoAlgorithm.h"
 
 //these hold the geometry of the sweepers and the mines
 const int	 NumSweeperVerts = 16;
@@ -49,14 +47,17 @@ CController::CController(HWND hwndMain): m_NumSweepers(CParams::iNumSweepers),
                                          cxClient(CParams::WindowWidth),
                                          cyClient(CParams::WindowHeight)
 {
-	//let's create the mine sweepers
-	for (int i=0; i<m_NumSweepers; ++i)
-	{
-		m_vecSweepers.push_back(CMinesweeper());
-	}
 
-	// Initialize the evolutionary algorithm
-	e = *(new Evo(m_NumSweepers));
+	evolutionAlgo = *(new EvoAlgorithm(m_NumSweepers,9));
+
+	//let's create the mine sweepers
+	for (int i=0; i<m_NumSweepers; ++i) // *Change m_NumSweepers according to the testing environment
+	{
+		CMinesweeper newSweeper = *(new CMinesweeper());
+		newSweeper.InitBrain(evolutionAlgo.population[i].ANNweights);
+		m_vecSweepers.push_back(newSweeper);
+		//m_vecSweepers.push_back(CMinesweeper());
+	}
 
 	//TODO: initialse the learning algorithm here
 	// _       _ _   _       _ _           _                   
@@ -79,7 +80,7 @@ CController::CController(HWND hwndMain): m_NumSweepers(CParams::iNumSweepers),
 	}
 	for (int i=0; i<m_NumRocks; ++i)
 	{
-		// Changed to convert rocks to super mines
+		// Change Rocks to supermines
 		m_vecObjects.push_back(CCollisionObject(CCollisionObject::SuperMine, SVector2D(RandFloat() * cxClient,
                                    RandFloat() * cyClient)));
 	}
@@ -103,7 +104,6 @@ CController::CController(HWND hwndMain): m_NumSweepers(CParams::iNumSweepers),
 	}
 
 }
-
 
 //--------------------------------------destructor-------------------------------------
 //
@@ -157,7 +157,7 @@ bool CController::Update()
 		for (int i=0; i<m_NumSweepers; ++i)
 		{
 			//update the position
-			if (!m_vecSweepers[i].Update(m_vecObjects))
+			if (!m_vecSweepers[i].Update(m_vecObjects)) 
 			{
 				//error in processing the learning algorithm
 				MessageBox(m_hwndMain, "An error occured while processing!", "Error", MB_OK);
@@ -176,6 +176,8 @@ bool CController::Update()
 					//we have discovered a mine so increase MinesGathered
 					m_vecSweepers[i].IncrementMinesGathered();
 
+					evolutionAlgo.changeFitness(i, 1);
+
 					//mine found so replace the mine with another at a random 
 					//position
 					m_vecObjects[GrabHit] = CCollisionObject(m_vecObjects[GrabHit].getType(),SVector2D(RandFloat() * cxClient,
@@ -184,12 +186,13 @@ bool CController::Update()
 			}
 		}
 	}
+
 	//Time to update the sweepers for the next iteration
 	else
 	{
 		//update the stats to be used in our stat window
 		//TODO: at the moment this is set to 0 for all sweepers by default.
-		//		You should apply meaningful stats from your sweepers here.
+		//You should apply meaningful stats from your sweepers here.
 		m_vecAvMinesGathered.push_back(0.0);
 		m_vecMostMinesGathered.push_back(0.0);
 
@@ -198,11 +201,16 @@ bool CController::Update()
 
 		//reset cycles
 		m_iTicks = 0;
-	
+
+		evolutionAlgo.doOneIteration();
+
 		//reset the sweepers positions etc
 		for (int i=0; i<m_NumSweepers; ++i)
 		{
 			m_vecSweepers[i].Reset();
+
+			// first mine gets the best brain
+			//m_vecSweepers[i].InitBrain(evolutionAlgo.population[i].ANNweights);
 		}
 	}
 	return true;
@@ -326,7 +334,7 @@ void CController::PlotStats(HDC surface)
 	string s = "Most MinesGathered:       " + ftos(m_vecSweepers.at(0).MinesGathered());
 	TextOut(surface, 5, 20, s.c_str(), s.size());
 
-     s = "Average MinesGathered: " + ftos(0.0);
+     s = "Average MinesGathered: " + ftos(m_vecSweepers.at(0).MinesGathered());
 	TextOut(surface, 5, 40, s.c_str(), s.size());
     
     //render the graph

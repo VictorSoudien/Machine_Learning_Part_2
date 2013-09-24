@@ -12,9 +12,11 @@ public:
 	vector<Node*> toLeft; // All the nodes that serve as input to this node
 	vector<float> weights; // The weight associated with each toLeft node
 	
-	Node();  // for hidden and output nodes
-	Node(float value);
-	void setInput(float value);
+public:
+	Node()
+		:output(0){}  // for hidden and output nodes
+
+	void set(float value);
 	float getOutputValue();
 	void attachNode(Node * n , float weight);
 	float calculateOutput();
@@ -30,8 +32,8 @@ public:
 	Node * hiddenNode2;
 	Node * hiddenNode3;
 
-	NeuralNetwork(){}
-	NeuralNetwork(std::array<float, 9> genotype);
-	float train(float dist, float theta);
+	NeuralNetwork();
+	NeuralNetwork(std::vector<float> genotype);
+	float train(const float dist, const float theta);
 
 };

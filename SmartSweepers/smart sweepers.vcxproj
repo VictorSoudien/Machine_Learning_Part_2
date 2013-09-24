@@ -125,25 +125,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ANN.cpp" />
     <ClCompile Include="C2DMatrix.cpp" />
     <ClCompile Include="CCollisionObject.cpp" />
     <ClCompile Include="CController.cpp" />
     <ClCompile Include="CMinesweeper.cpp" />
     <ClCompile Include="CParams.cpp" />
     <ClCompile Include="CTimer.cpp" />
-    <ClCompile Include="Evo.cpp" />
+    <ClCompile Include="EvoAlgorithm.cpp" />
+    <ClCompile Include="Genotype.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Perceptron.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ANN.h" />
     <ClInclude Include="C2DMatrix.h" />
     <ClInclude Include="CController.h" />
     <ClInclude Include="CMinesweeper.h" />
     <ClInclude Include="CCollisionObject.h" />
     <ClInclude Include="CParams.h" />
     <ClInclude Include="CTimer.h" />
-    <ClInclude Include="Evo.h" />
+    <ClInclude Include="EvoAlgorithm.h" />
+    <ClInclude Include="Genotype.h" />
     <ClInclude Include="Perceptron.h" />
     <ClInclude Include="SVector2D.h" />
     <ClInclude Include="utils.h" />

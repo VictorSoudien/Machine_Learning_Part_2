@@ -11,6 +11,7 @@
 //
 //------------------------------------------------------------------------
 #include <vector>
+#include "Evo.h"
 #include <sstream>
 #include <string>
 #include <fstream>
@@ -21,6 +22,7 @@
 #include "C2DMatrix.h"
 #include "SVector2D.h"
 #include "CParams.h"
+#include "EvoAlgorithm.h"
 
 using namespace std;
 
@@ -57,9 +59,6 @@ private:
 	vector<double>		   m_vecMostMinesGathered;
 
 
-	// Evolutionary algorithm used
-	Evo e;
-
 
 	//pens we use for the stats
 	HPEN				m_RedPen;
@@ -81,6 +80,8 @@ private:
 
   //window dimensions
   int         cxClient, cyClient;
+
+  EvoAlgorithm evolutionAlgo;
 
   //this function plots a graph of the average and best MinesGathered
   //over the course of a run

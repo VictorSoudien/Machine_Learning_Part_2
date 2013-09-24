@@ -45,7 +45,13 @@
     <ClCompile Include="Perceptron.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Evo.cpp">
+    <ClCompile Include="ANN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EvoAlgorithm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Genotype.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,7 +83,13 @@
     <ClInclude Include="Perceptron.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Evo.h">
+    <ClInclude Include="ANN.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EvoAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Genotype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

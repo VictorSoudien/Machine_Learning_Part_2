@@ -1,7 +1,9 @@
 #include "CMinesweeper.h"
-#include "perceptron.h";
+#include "Evo.h";
+#include "ANN.h"
+#include <array>
 
-//Perceptron p;
+
 
 //-----------------------------------constructor-------------------------
 //
@@ -63,9 +65,15 @@ int CMinesweeper :: identifyObject(CCollisionObject &object)
 {	
 	if (object.getType() == CCollisionObject::Mine)
 	{
+		//OutputDebugStringA("I am a mine.");
 		return 1;
 	}
 	return 0;
+}
+
+void CMinesweeper::InitBrain(std::vector<float> weights)
+{
+	ANN = new NeuralNetwork(weights);
 }
 
 CCollisionObject CMinesweeper:: getClosestObject(vector<CCollisionObject> &objects)
@@ -122,68 +130,21 @@ bool CMinesweeper::Update(vector<CCollisionObject> &objects)
 	//get vector to closest mine
 	SVector2D vClosestMine = GetClosestMine(objects);
 
-	bool turn = false;
-
-	if (Vec2DLength(vClosestMine) < 15)
-	{
-		turn = true;
-	}
-
+	ANN = new NeuralNetwork();
 	//normalise it
 	Vec2DNormalize(vClosestMine);
 
-	Perceptron p = *(new Perceptron(-0.8, 0.1, 0.5, 0.5));
+	float annOutput = ANN->train(Vec2DLength(vClosestMine), Vec2DDot(m_vLookAt, vClosestMine));
 
-	for (int d = 0; d < 60; d += 5)
-	{
-		for (int theta = 0; theta < 90; theta += 10)
-		{
-			if ((d < 15) && (theta <= 25))
-			{
-				p.train(d,theta,1);
-			}
-			else
-			{
-				p.train(d, theta, 0);
-			}
-		}
-	}
+	double RotForce = annOutput * 180;
 
-	Perceptron hidden =  *(new Perceptron(-0.8, 0.1, 0.8,0.3));
-	hidden.train(1,1,0);
-	hidden.train(1,0,1);
-	hidden.train(0,0,0);
-	hidden.train(0,1,0);
-
-	//TODO: calculate the steering forces here, it is set to 0 for now...
-	double RotForce = 0;
-
-	int ANNOutput = hidden.classify(p.classify(Vec2DLength(vClosestMine), Vec2DDot(m_vLookAt, vClosestMine)), identifyObject(getClosestObject(objects)));
-
-	if (ANNOutput == 0)
-	{
-		RotForce = 45;
-	}
-	else
-	{
-		IncrementMinesGathered();
-	}
-	/*if (p.classify(Vec2DLength(vClosestMine), Vec2DDot(m_vLookAt, vClosestMine)) == 1 && (!(identifyObject(getClosestObject(objects)) == 1)))
-	{
-		RotForce = 45;
-	}
-	if (identifyObject(getClosestObject(objects)) == 1 && (CheckForMine(objects, 0) != -1))
-	{
-		IncrementMinesGathered();
-	}*/
-	
 	//clamp rotation
 	Clamp(RotForce, -CParams::dMaxTurnRate, CParams::dMaxTurnRate);
 
 	m_dRotation += RotForce;
 
 	//TODO: calculate the speed of the sweeper here (it is set to 0.5 by default)
-	m_dSpeed = 0.5;	
+	m_dSpeed = 1;	
 
 	//update Look At 
 	m_vLookAt.x = -sin(m_dRotation);
@@ -192,7 +153,6 @@ bool CMinesweeper::Update(vector<CCollisionObject> &objects)
 	//update position
 	m_vPosition += (m_vLookAt * m_dSpeed);
 
-	
 	//wrap around window limits
 	if (m_vPosition.x > CParams::WindowWidth) m_vPosition.x = 0;
 	if (m_vPosition.x < 0) m_vPosition.x = CParams::WindowWidth;
@@ -248,5 +208,3 @@ int CMinesweeper::CheckForMine(vector<CCollisionObject> &objects, double size)
 
   return -1;
 }
-
-		

@@ -12,12 +12,15 @@
 //------------------------------------------------------------------------
 #include <vector>
 #include <math.h>
+#include <array>
 #include "utils.h"
 #include "C2DMatrix.h"
 #include "SVector2D.h"
 #include "CParams.h"
 #include "CCollisionObject.h"
 #include "perceptron.h";
+#include "ANN.h"
+#include "Evo.h"
 using namespace std;
 
 
@@ -42,10 +45,12 @@ private:
 	//the scale of the sweeper when drawn
 	double			m_dScale;
 
-  //index position of closest mine
-  int         m_iClosestMine;
+	  //index position of closest mine
+	int         m_iClosestMine;
 
-public:
+	NeuralNetwork *ANN;
+
+	public:
 
 	CMinesweeper();
 	
@@ -74,6 +79,8 @@ public:
 	int identifyObject(CCollisionObject &object);
 
 	CCollisionObject getClosestObject(vector<CCollisionObject> &objects);
+
+	void InitBrain(std::vector<float> weights);
 
 };
 
