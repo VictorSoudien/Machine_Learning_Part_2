@@ -65,7 +65,6 @@ int CMinesweeper :: identifyObject(CCollisionObject &object)
 {	
 	if (object.getType() == CCollisionObject::Mine)
 	{
-		//OutputDebugStringA("I am a mine.");
 		return 1;
 	}
 	return 0;
@@ -130,13 +129,12 @@ bool CMinesweeper::Update(vector<CCollisionObject> &objects)
 	//get vector to closest mine
 	SVector2D vClosestMine = GetClosestMine(objects);
 
-	ANN = new NeuralNetwork();
+	//ANN = new NeuralNetwork();
 	//normalise it
 	Vec2DNormalize(vClosestMine);
 
-	float annOutput = ANN->train(Vec2DLength(vClosestMine), Vec2DDot(m_vLookAt, vClosestMine));
-
-	double RotForce = annOutput * 180;
+	std:vector<float> annOutput = ANN->train(Vec2DLength(vClosestMine), Vec2DDot(m_vLookAt, vClosestMine));
+	double RotForce = annOutput[0] - annOutput[1];
 
 	//clamp rotation
 	Clamp(RotForce, -CParams::dMaxTurnRate, CParams::dMaxTurnRate);
@@ -144,7 +142,7 @@ bool CMinesweeper::Update(vector<CCollisionObject> &objects)
 	m_dRotation += RotForce;
 
 	//TODO: calculate the speed of the sweeper here (it is set to 0.5 by default)
-	m_dSpeed = 1;	
+	m_dSpeed = 2;	
 
 	//update Look At 
 	m_vLookAt.x = -sin(m_dRotation);

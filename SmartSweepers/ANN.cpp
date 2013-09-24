@@ -44,6 +44,7 @@ NeuralNetwork::NeuralNetwork()
 	input_theta = new Node();
 
 	outputNode = new Node(); // One output - the rotation force
+	outputNode2 = new Node(); 
 
 	hiddenNode1 = new Node();	// 3 Hidden layers
 	hiddenNode2 = new Node();
@@ -57,11 +58,11 @@ NeuralNetwork::NeuralNetwork(std::vector<float> genotype)
 	input_theta = new Node();
 
 	outputNode = new Node(); // One output - the rotation force
+	outputNode2 = new Node(); 
 
 	hiddenNode1 = new Node();	// 3 Hidden layers
 	hiddenNode2 = new Node();
 	hiddenNode3 = new Node();
-
 
 	// Attach appropriately with outputs from nodes on left - Feed forward
 	hiddenNode1->attachNode(input_d, genotype[0]);
@@ -75,9 +76,14 @@ NeuralNetwork::NeuralNetwork(std::vector<float> genotype)
 	outputNode->attachNode(hiddenNode1, genotype[6]);
 	outputNode->attachNode(hiddenNode2, genotype[7]);
 	outputNode->attachNode(hiddenNode3, genotype[8]);
+
+	// The output node
+	outputNode2->attachNode(hiddenNode1, genotype[9]);
+	outputNode2->attachNode(hiddenNode2, genotype[10]);
+	outputNode2->attachNode(hiddenNode3, genotype[11]);
 }
 
-float NeuralNetwork::train(const float dist,const float theta)
+std::vector<float> NeuralNetwork::train(const float dist,const float theta)
 {
 	input_d->set(dist);
 	input_theta->set(theta);
@@ -88,6 +94,10 @@ float NeuralNetwork::train(const float dist,const float theta)
 
 	//outputNode->set(hiddenNode1->calculateOutput() + hiddenNode3->calculateOutput() + hiddenNode3->calculateOutput());
 
-	return outputNode->calculateOutput();
+	std::vector<float> temp;
+	temp.push_back(outputNode->calculateOutput());
+	temp.push_back(outputNode2->calculateOutput());
+
+	return temp;
 }
 

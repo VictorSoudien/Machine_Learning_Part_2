@@ -13,6 +13,6 @@ public:
 	~Genotype(void);
 
 	void setFitness(float fit);
-	friend bool operator<(const Genotype& lhs, const Genotype& rhs){return lhs.fitness < rhs.fitness;}
+	friend bool operator<(const Genotype& lhs, const Genotype& rhs){return lhs.fitness > rhs.fitness;}
 };
 

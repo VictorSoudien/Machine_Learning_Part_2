@@ -28,12 +28,13 @@ public:
 	Node * input_d;
 	Node * input_theta;
 	Node * outputNode;
+	Node * outputNode2;
 	Node * hiddenNode1;
 	Node * hiddenNode2;
 	Node * hiddenNode3;
 
 	NeuralNetwork();
 	NeuralNetwork(std::vector<float> genotype);
-	float train(const float dist, const float theta);
+	std::vector<float> train(const float dist, const float theta);
 
 };

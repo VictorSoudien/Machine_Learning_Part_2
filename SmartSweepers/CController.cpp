@@ -48,7 +48,7 @@ CController::CController(HWND hwndMain): m_NumSweepers(CParams::iNumSweepers),
                                          cyClient(CParams::WindowHeight)
 {
 
-	evolutionAlgo = *(new EvoAlgorithm(m_NumSweepers,9));
+	evolutionAlgo = *(new EvoAlgorithm(m_NumSweepers,12));
 
 	//let's create the mine sweepers
 	for (int i=0; i<m_NumSweepers; ++i) // *Change m_NumSweepers according to the testing environment
@@ -183,6 +183,12 @@ bool CController::Update()
 					m_vecObjects[GrabHit] = CCollisionObject(m_vecObjects[GrabHit].getType(),SVector2D(RandFloat() * cxClient,
 											RandFloat() * cyClient));
 				}
+				else if (m_vecObjects[GrabHit].getType() == CCollisionObject::SuperMine)
+				{
+					evolutionAlgo.changeFitness(i, -1);
+
+					//m_vecSweepers[i] == null;
+				}
 			}
 		}
 	}
@@ -203,6 +209,8 @@ bool CController::Update()
 		m_iTicks = 0;
 
 		evolutionAlgo.doOneIteration();
+		int max = 0;
+		int sum = 0;
 
 		//reset the sweepers positions etc
 		for (int i=0; i<m_NumSweepers; ++i)
@@ -210,7 +218,7 @@ bool CController::Update()
 			m_vecSweepers[i].Reset();
 
 			// first mine gets the best brain
-			//m_vecSweepers[i].InitBrain(evolutionAlgo.population[i].ANNweights);
+			m_vecSweepers[i].InitBrain(evolutionAlgo.population[i].ANNweights);
 		}
 	}
 	return true;

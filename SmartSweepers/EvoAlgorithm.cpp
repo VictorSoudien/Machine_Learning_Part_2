@@ -115,16 +115,10 @@ void EvoAlgorithm::resetFitness()
 
 void EvoAlgorithm::doOneIteration()
 {
-	//std::vector<Genotype> peviousGeneration = population;
-	OutputDebugString("Starting");
 	std::sort(population.begin(), population.end());
-	OutputDebugString("Sorted");
 	selectBest();
-	OutputDebugString("Best");
 	performCrossover();
-	OutputDebugString("Cross");
 	performMutation();
-	OutputDebugString("Mutation");
 
 	resetFitness();
 }
